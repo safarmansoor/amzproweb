@@ -1,7 +1,7 @@
 // Supabase Client Configuration
 // Replace these with your actual Supabase project details
-const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL';
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+const SUPABASE_URL = 'https://reiqqvxjdyopfqlbvnli.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJlaXFxdnhqZHlvcGZxbGJ2bmxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1Mzg5NzAsImV4cCI6MjA5MDExNDk3MH0.Yv8rUR-VT9SqOaIxD5z9iKQBaktZnu0Ou_X9daVU9QQ';
 
 // Initialize Supabase client
 const { createClient } = supabase;
