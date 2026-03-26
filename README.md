@@ -84,11 +84,24 @@ Your app will be available at `https://yourusername.github.io/yourrepositoryname
 
 ## CSV Format Requirements
 
-The app expects Amazon transaction CSV files with these columns:
+The app expects Amazon transaction CSV files with these specifications:
+
+### **File Structure**
+- **Rows 1-6**: Metadata and header information (automatically skipped)
+- **Row 7**: Column headers
+- **Row 8+**: Transaction data
+
+### **Required Columns**
 - `sku` - Product SKU identifier
 - `type` - Transaction type (Order, Shipping Services, etc.)
 - `product sales` - Sales amount
 - `other transaction fees` - Easyship charges (negative values)
+
+### **Data Processing**
+- The app automatically skips the first 6 rows containing metadata
+- Row 7 is used as the header row
+- Data processing starts from row 8 onwards
+- All CSV parsing happens locally in your browser for privacy
 
 ## Data Processing
 

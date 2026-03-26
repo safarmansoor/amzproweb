@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSV Parser Test</title>
+    <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
+</head>
+<body>
+    <h1>CSV Parser Test</h1>
+    <input type="file" id="file-input" accept=".csv">
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('file-input').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                delimiter: ",",
+                quoteChar: '"',
+                escapeChar: '"',
+                newline: "\r\n",
+                complete: function(results) {
+                    const resultDiv = document.getElementById('result');
+                    
+                    if (results.errors.length > 0) {
+                        resultDiv.innerHTML = '<h3 style="color: red;">Parsing Errors:</h3>' + 
+                            results.errors.map(e => `Row ${e.row}: ${e.message}`).join('<br>');
+                    } else {
+                        // Filter out first 6 rows (metadata), keep data from row 6 onwards
+                        const filteredData = results.data.filter((row, index) => index >= 6);
+                        
+                        resultDiv.innerHTML = `
+                            <h3 style="color: green;">Success!</h3>
+                            <p>Total rows parsed: ${results.data.length}</p>
+                            <p>Data rows (after skipping metadata): ${filteredData.length}</p>
+                            <p>Fields: ${results.meta.fields ? results.meta.fields.length : 'Unknown'}</p>
+                            <h4>First few data rows:</h4>
+                            <pre>${JSON.stringify(filteredData.slice(0, 2), null, 2)}</pre>
+                            <h4>All fields:</h4>
+                            <pre>${JSON.stringify(results.meta.fields, null, 2)}</pre>
+                        `;
+                    }
+                },
+                error: function(error) {
+                    document.getElementById('result').innerHTML = `<h3 style="color: red;">Error: ${error.message}</h3>`;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

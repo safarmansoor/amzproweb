@@ -11,17 +11,41 @@ class AmazonCSVParser {
             Papa.parse(file, {
                 header: true,
                 skipEmptyLines: true,
+                delimiter: ",",           // Explicit comma delimiter
+                quoteChar: '"',           // Quote character for fields containing commas
+                escapeChar: '"',          // Handle escaped quotes in descriptions
+                newline: "\r\n",          // Handle Windows line endings
+                skipEmptyLines: 'greedy', // Skip all empty lines including those with only whitespace
+                transform: (value) => value ? value.trim() : value, // Trim whitespace
                 complete: (results) => {
                     if (results.errors.length > 0) {
-                        reject(new Error('CSV parsing errors: ' + results.errors.map(e => e.message).join(', ')));
+                        // Provide more detailed error information
+                        const errorMessages = results.errors.map(e => 
+                            `Row ${e.row}: ${e.message}`
+                        );
+                        reject(new Error('CSV parsing errors: ' + errorMessages.join('; ')));
                         return;
                     }
                     
-                    this.transactions = results.data;
-                    resolve(this.transactions);
+                    // Validate that we have the expected number of columns
+                    if (results.meta.fields && results.meta.fields.length < 15) {
+                        reject(new Error(`CSV appears to have incorrect format. Expected at least 15 columns, found ${results.meta.fields.length}. Please ensure you're uploading an Amazon transaction CSV file.`));
+                        return;
+                    }
+                    
+                    // Filter out the first 7 rows (header is on row 7, data starts after)
+                    // Papa Parse with header: true automatically uses the first row as headers
+                    // But we need to skip the first 6 data rows that are actually metadata
+                    const filteredData = results.data.filter((row, index) => {
+                        // Skip first 6 rows (0-5) which contain metadata, keep from row 6 onwards
+                        return index >= 6;
+                    });
+                    
+                    this.transactions = filteredData;
+                    resolve(filteredData);
                 },
                 error: (error) => {
-                    reject(error);
+                    reject(new Error(`Failed to parse CSV file: ${error.message}`));
                 }
             });
         });

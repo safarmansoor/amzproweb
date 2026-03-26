@@ -62,7 +62,7 @@ class AmazonProfitAnalyzer {
             const processedData = csvParser.processTransactions(transactions);
             this.processedData = processedData;
             
-            this.showStatus('upload-status', `Successfully parsed ${processedData.length} SKUs from CSV.`, 'success');
+            this.showStatus('upload-status', `Successfully parsed ${processedData.length} SKUs from CSV. Skipped metadata rows (rows 1-6).`, 'success');
             this.showStep(2); // Show cost management step
             
             // Load existing costs and display them
